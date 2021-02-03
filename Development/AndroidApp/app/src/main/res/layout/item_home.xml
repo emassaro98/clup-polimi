@@ -149,18 +149,17 @@
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabQrCode"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="32dp"
                 android:clickable="true"
                 android:tint="@android:color/black"
                 app:backgroundTint="@color/colorAccent"
-                app:fabCustomSize="56dp"
+                app:fabCustomSize="42dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:maxImageSize="32dp"
-                app:srcCompat="@drawable/ic_qr_code" />
+                card_view:srcCompat="@drawable/ic_qr_code" />
 
             <TextView
                 android:id="@+id/txtDateLabel"
@@ -169,6 +168,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/nunito_sans_bold"
+
                 android:text="@string/label_date_reservation"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
