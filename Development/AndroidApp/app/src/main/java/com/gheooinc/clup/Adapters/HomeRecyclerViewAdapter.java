@@ -105,7 +105,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         mValues.remove(removePositionId);
         notifyItemRemoved(removePositionId);
         notifyItemRangeChanged(removePositionId, mValues.size());
-        mViewHolder.itemView.setVisibility(View.GONE);
     }
 
 

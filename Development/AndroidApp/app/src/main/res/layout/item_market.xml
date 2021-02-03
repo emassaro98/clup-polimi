@@ -2,23 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="380dp"
+    android:layout_height="390dp"
     android:layout_marginBottom="2dp"
     android:clipToPadding="false"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_ticket"
+        android:id="@+id/card_market"
         android:layout_width="fill_parent"
-        android:layout_height="260dp"
+        android:layout_height="330dp"
         android:layout_gravity="center"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="36dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="8dp"
         card_view:cardCornerRadius="12dp"
         card_view:cardElevation="@dimen/card_elevation"
         card_view:contentPadding="@dimen/small_padding">
@@ -28,39 +26,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/txtDate"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabBooking"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="6dp"
-                android:background="@drawable/oval_shape"
-                android:backgroundTint="@color/light_orange"
-                android:elevation="@dimen/medium_elevation"
-                android:padding="@dimen/small_padding"
-                android:text="10-10-98"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/txtDateLabel" />
-
-            <TextView
-                android:id="@+id/txtType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="6dp"
-                android:background="@drawable/oval_shape"
-                android:backgroundTint="@color/light_orange"
-                android:elevation="@dimen/medium_elevation"
-                android:padding="@dimen/small_padding"
-                android:text="Booking"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintEnd_toEndOf="parent" />
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                app:backgroundTint="@color/light_orange"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:srcCompat="@drawable/ic_booking" />
 
             <ImageView
                 android:id="@+id/imgMarket"
@@ -99,7 +75,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="42dp"
+                android:layout_marginTop="40dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/guideline"
                 app:tint="@color/red"
@@ -110,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="54dp"
-                android:layout_marginTop="46dp"
+                android:layout_marginTop="44dp"
                 android:fontFamily="@font/nunito_sans_bold"
                 android:text="Via Vincenzo Monti, 55, Milano"
                 android:textSize="14sp"
@@ -136,10 +112,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="6dp"
                 android:background="@drawable/oval_shape"
-                android:backgroundTint="@color/light_orange"
+                android:backgroundTint="@color/yellow"
                 android:elevation="@dimen/medium_elevation"
                 android:padding="@dimen/small_padding"
-                android:text="8:00"
+                android:text="10-15 min"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -147,47 +123,59 @@
                 card_view:layout_constraintStart_toEndOf="@+id/txtAttempTimeLabel" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabQrCode"
+                android:id="@+id/fabLineUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
                 android:clickable="true"
-                android:tint="@android:color/black"
-                app:backgroundTint="@color/colorAccent"
-                app:fabCustomSize="56dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:maxImageSize="32dp"
-                app:srcCompat="@drawable/ic_qr_code" />
+                app:backgroundTint="@color/light_blue"
+                app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:srcCompat="@drawable/ic_lineup" />
 
             <TextView
-                android:id="@+id/txtDateLabel"
+                android:id="@+id/textView2"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:fontFamily="@font/nunito_sans_bold"
+                android:gravity="center"
+                android:text="@string/label_lineup"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/nunito_sans_bold"
+                android:gravity="center"
+                android:text="@string/label_booking"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toTopOf="@+id/guideline2" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/nunito_sans_bold"
-                android:text="@string/label_date_reservation"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/txtAttempTime" />
+                android:orientation="horizontal"
+                card_view:layout_constraintGuide_percent="0.5" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                card_view:layout_constraintGuide_percent="0.5" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:backgroundTint="@color/red"
-        android:elevation="@dimen/card_elevation"
-        android:fontFamily="@font/nunito_sans_bold"
-        android:text="@string/label_delete"
-        android:textColor="@android:color/white"
-        app:cornerRadius="12dp" />
 </LinearLayout>

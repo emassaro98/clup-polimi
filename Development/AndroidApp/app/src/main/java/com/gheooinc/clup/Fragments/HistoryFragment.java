@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gheooinc.clup.Adapters.HomeRecyclerViewAdapter;
+import com.gheooinc.clup.Adapters.HistoryRecyclerViewAdapter;
 import com.gheooinc.clup.Interfaces.CompleteListener;
 import com.gheooinc.clup.Objects.Reservation;
 import com.gheooinc.clup.Objects.User;
@@ -25,10 +25,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class HomeFragment extends Fragment implements CompleteListener<String> {
+public class HistoryFragment extends Fragment implements CompleteListener<String> {
 
     //Tag for the logcat
-    public static final String TAG = HomeFragment.class.getSimpleName();
+    public static final String TAG = HistoryFragment.class.getSimpleName();
 
     //vars
     private User user;
@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_home, container, false);
+        mView = inflater.inflate(R.layout.fragment_history, container, false);
         //setups methods
         initViews();
         initComponents();
@@ -50,8 +50,8 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
     //method for initialization of the view element
     private void initViews() {
         //findViewById
-        mProgressBar = mView.findViewById(R.id.progressBarHome);
-        mRecyclerView = mView.findViewById(R.id.recyclerViewHome);
+        mProgressBar = mView.findViewById(R.id.progressBarHistory);
+        mRecyclerView = mView.findViewById(R.id.recyclerViewHistory);
         mTxtError = mView.findViewById(R.id.txtError);
     }
 
@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
     private void initContent() {
         mTxtError.setVisibility(View.GONE);
         Utility utility = new Utility();
-        utility.makeCallGetWithToken(user.getBaseURL() + "users/getActiveReservations/" + user.getId(), mView.getContext(), user.getToken(), this);
+        utility.makeCallGetWithToken(user.getBaseURL() + "users/getAllReservations/" + user.getId(), mView.getContext(), user.getToken(), this);
     }
 
     //method that is used for decode the json, and then get the data
@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
                 JSONArray jsonBookings = jsonData.getJSONArray("bookings");
 
                 if (jsonLineups.length() == 0 && jsonBookings.length() == 0) {
-                    mTxtError.setText(getResources().getString(R.string.label_error_home));
+                    mTxtError.setText(getResources().getString(R.string.label_error_history));
                     mTxtError.setVisibility(View.VISIBLE);
                 } else {
                     mTxtError.setVisibility(View.GONE);
@@ -101,6 +101,7 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
                     reservation.setShopName(lineup.getString("shop_name"));
                     reservation.setAttemptTime(lineup.getString("expected_time") + " min");
                     reservation.setShopAddress(lineup.getString("shop_position"));
+                    reservation.setDate(lineup.getString("date"));
                     reservation.setBooking(false);
                     reservations.add(reservation);
                 }
@@ -112,15 +113,15 @@ public class HomeFragment extends Fragment implements CompleteListener<String> {
                     Reservation reservation = new Reservation();
                     reservation.setId(booking.getInt("id"));
                     reservation.setShopName(booking.getString("shop_name"));
-                    reservation.setAttemptTime(booking.getString("time_slot"));
-                    reservation.setDate(booking.getString("date"));
+                    reservation.setAttemptTime(booking.getString("expected_duration"));
                     reservation.setShopAddress(booking.getString("shop_position"));
+                    reservation.setDate(booking.getString("date"));
                     reservation.setBooking(true);
                     reservations.add(reservation);
                 }
                 //set recycler view and pass elements
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
-                mRecyclerView.setAdapter(new HomeRecyclerViewAdapter(reservations, user.getToken(), user.getBaseURL(), mView.getContext()));
+                mRecyclerView.setAdapter(new HistoryRecyclerViewAdapter(reservations, mView.getContext()));
             } else {
                 //get the message from json
                 mTxtError.setVisibility(View.VISIBLE);
