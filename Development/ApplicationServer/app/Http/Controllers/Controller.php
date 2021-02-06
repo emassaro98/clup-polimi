@@ -11,17 +11,17 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    //method for create json of a succes request
+    //Method for create json of a success request
     public function success($data, $code){
         return response()->json(['state' => true, 'data' => $data], $code);
     }
 
-    //method for create json of a succes request but without data
+    //Method for create json of a success request but without data
     public function successWithMessage($message, $code){
         return response()->json(['state' => true, 'message' => $message], $code);
     }
 
-    //method for create json of a error request
+    //Method for create json of a error request
     public function error($message, $code){
         return response()->json(['state' => false, 'message' => $message], $code);
     }

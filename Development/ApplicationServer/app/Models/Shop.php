@@ -9,7 +9,7 @@ class Shop extends Model
 {
     use HasFactory;
 
-    //this function is used for map the foreing jeys
+    //these methods are used for map the foreing keys in laravel
     function lineup()
     {
         return $this->hasMany('App\Models\Lineup');
@@ -35,11 +35,11 @@ class Shop extends Model
         return $this->hasMany('App\Models\TimeSlot');
     }
     
-    //this function is used for check if in the date the shop is open
+    //this function are used for check if in the date the shop is open
     public static function checkDate($id, $date)
     {
+        //get the shop by id
         $shop = Shop::find($id);
-        
         //check if the shop is open for that date
         if($shop->holiday()->where('date', $date)->count() > 0){
             return false;

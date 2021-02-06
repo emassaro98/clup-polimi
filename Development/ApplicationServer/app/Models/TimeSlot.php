@@ -9,7 +9,7 @@ class TimeSlot extends Model
 {
     use HasFactory;
 
-    //this function is used for map the foreing jeys
+    //these methods are used for map the foreing keys in laravel
     function lineup()
     {
         return $this->hasMany('App\Models\Lineup');
@@ -25,14 +25,11 @@ class TimeSlot extends Model
         return $this->belongsTo('App\Models\Shop', 'shop_id');
     }
 
-    //this function is use for update the capacity, for increment o decrement of one unit
-    public static function updateCapacity($time_slot_up_id, $time_slot_down_id, $increment)
+    //these methods are used for associate the foreign keys in laravel
+    public function withShop($shop)
     {
-        if($increment){
-            TimeSlot::whereBetween('id', [$time_slot_down_id, $time_slot_up_id])->increment('capacity');
-        } else{
-            TimeSlot::whereBetween('id', [$time_slot_down_id, $time_slot_up_id])->decrement('capacity');
-        }
+        $this->shop()->associate($shop);
+        return $this;
     }
 
     /**

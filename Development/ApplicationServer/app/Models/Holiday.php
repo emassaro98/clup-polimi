@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Holiday extends Model
 {
 
-    //this function is used for map the foreing keys
+    //these methods are used for map the foreing keys in laravel
     function shop()
     {
         return $this->belongsTo('App\Models\Shop', 'shop_id');

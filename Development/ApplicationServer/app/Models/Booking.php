@@ -9,7 +9,7 @@ class Booking extends Model
 {
     use HasFactory;
 
-    //this function is used for map the foreing jeys
+    //these methods are used for map the foreing keys in laravel
     function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id');
@@ -30,7 +30,7 @@ class Booking extends Model
         return $this->belongsTo('App\Models\TimeSlot', 'time_slot_down_bound_id');
     }
 
-    //this methoed is user for associate the foreign key
+    //these methods are used for associate the foreign keys in laravel
     public function withUser($user)
     {
         $this->user()->associate($user);

@@ -11,7 +11,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     
-    //this function is used for map the foreing jeys
+    //these methods are used for map the foreing keys in laravel
     function lineup()
     {
         return $this->hasMany('App\Models\Lineup');
