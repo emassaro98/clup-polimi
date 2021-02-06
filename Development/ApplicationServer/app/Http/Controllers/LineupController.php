@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Lineup;
 use App\Models\Shop;
-use App\Models\User;
 use App\Models\TimeSlot;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class LineupController extends Controller
@@ -22,27 +21,29 @@ class LineupController extends Controller
         return $lineups;
     }
 
-
     //method for update the single lineup by specific id
     public function updateLineup(Request $request, $id)
     {
         //Validate
         $request->validate([
-            'status' => 'required'
+            'status' => 'required',
         ]);
 
         //find the lineup by id that we wanto to update
         $lineup = Lineup::find($id);
 
-        if(!$lineup){
+        if (!$lineup) {
             return $this->error('Ops... Something went wrong!', 200);
         }
 
         //check if the new status is enter (1) or exit (2)
-        if($request->status == 1 || $request->status == 2){
+        if ($request->status == 1 && $lineup == 0) {
             //update capacity decrement it
-            TimeSlot::updateCapacity($lineup->time_slot_down_bound_id, $lineup->time_slot_up_bound_id, false);
-        } 
+            TimeSlot::whereBetween('id', [$lineup->time_slot_down_bound_id, $lineup->time_slot_up_bound_id])->decrement('capacity');
+        } else if ($request->status == 2 && $lineup != 2) {
+            //update capacity increment it
+            TimeSlot::whereBetween('id', [$lineup->time_slot_down_bound_id, $lineup->time_slot_up_bound_id])->increment('capacity');
+        }
 
         //update the lineup
         $lineup->update($request->all());
@@ -54,83 +55,90 @@ class LineupController extends Controller
     {
         //Validate
         $request->validate([
-            'expected_duration' => 'required'
+            'expected_duration' => 'required',
         ]);
-        
+
         //get user and shop by ids that are associate to the new lineup
         $user = User::find($request->user_id);
         $shop = Shop::find($request->shop_id);
 
-        if(!$user || !$shop){
+        if (!$user || !$shop) {
             return $this->error('Ops... Something went wrong!', 200);
+        } elseif ($user->lineup()->where('shop_id', $request->shop_id)->where('status', 0)->count() > 0) {
+            return $this->error('You have already an active lineup on this shop!', 200);
         }
 
         $date = Carbon::today()->format('Y-m-d');
         $time = Carbon::now('Europe/Rome');
-        $n_duration = ($request->expected_duration)/15;
-        
-        //find the timeslots for the lineup in order to get the expected time
-        $time_slots = $shop->timeSlot()->where('capacity', '>', 0)->where('date', $date)->where('time_slot', '>=', $time)->get();
-        $n_time_slots = $time_slots->count();
+        $n_duration = ($request->expected_duration) / 15;
 
-        //We add due field of the obj in order to retrive this in the json
-        $time_slots->map(function ($item, $request) {
-            //represent the id of bounds of timeslot that the user should use based on the expected time
-            $item['time_slot_up_bound_id'] = $item->id;
-            $item['time_slot_down_bound_id'] = $item->id;
-            return $item;
-        });
+        if (Shop::checkDate($request->shop_id, $request->date)) {
 
-        for ($i = 0; $i < $n_time_slots; $i++) {
-            //we set to 1 the var neighbours, that is used for understand if the time slot is aviable, considered the expected_duration
-            $neighbours = 1;
-            $time_slot = Carbon::createFromFormat('H:i:s', $time_slots[$i]->time_slot);
+            //find the timeslots for the lineup in order to get the expected time
+            $time_slots = $shop->timeSlot()->where('capacity', '>', 0)->where('date', $date)->where('time_slot', '>=', $time)->get();
+            $n_time_slots = $time_slots->count();
 
-            //check if there are sufficent time slots (after the one that we have) considered the expected_duration
-            if($i + ($n_duration-1) <=  ($n_time_slots-1)){
-                //we iterate for each time slot after the one considered
-                for($j = $i + 1; $j < $n_duration; $j++){
-                    $time_slot_next = Carbon::createFromFormat('H:i:s', $time_slots[$j]->time_slot);
-                    //Log::info('In cycle of id: '.$time_slots[$j]->id.' with j: '.$j.' with i: '.$i.' with value of neighbours: '.$neighbours);
-                    //we check if the timeslot j, is after i ex. 8.15, 8.30 ecc, than are continuos time slot
-                    if($time_slot_next->equalTo($time_slot->addMinutes(15))){
-                        $neighbours++;
+            //We add due field of the obj in order to retrive this in the json
+            $time_slots->map(function ($item, $request) {
+                //represent the id of bounds of timeslot that the user should use based on the expected time
+                $item['time_slot_up_bound_id'] = $item->id;
+                $item['time_slot_down_bound_id'] = $item->id;
+                return $item;
+            });
+
+            for ($i = 0; $i < $n_time_slots; $i++) {
+                //we set to 1 the var neighbours, that is used for understand if the time slot is aviable, considered the expected_duration
+                $neighbours = 1;
+                $time_slot = Carbon::createFromFormat('H:i:s', $time_slots[$i]->time_slot);
+
+                //check if there are sufficent time slots (after the one that we have) considered the expected_duration
+                if ($i + $n_duration <= $n_time_slots) {
+                    //we iterate for each time slot after the one considered
+                    for($j = $i + 1; $j <= $n_duration + $i - 1; $j++){
+                        $time_slot_next = Carbon::createFromFormat('H:i:s', $time_slots[$j]->time_slot);
+                        //we check if the timeslot j, is after i ex. 8.15, 8.30 ecc, than are continuos time slot
+                        if ($time_slot_next->equalTo($time_slot->addMinutes(15))) {
+                            $neighbours++;
+                        }
+                        //Log::info('In cycle of id: '.$time_slots[$j]->id.' with j: '.$j.' with i: '.$i.' with value of neighbours: '.$neighbours);
                     }
+                }
+
+                //if the time slot i have a sufficent numbers of neighbours sequential after it, then is a valid time slot
+                if ($neighbours >= $n_duration) {
+                    $time_slots[$i]->time_slot_up_bound_id = $time_slots[$i]->id + $n_duration - 1;
+                    $time_slots[$i]->time_slot = substr($time_slots[$i]->time_slot, 0, 5);
+                    break;
+                } else {
+                    //remove time slot form the json, that doesn't satisfy the expected_duration
+                    //Log::info('In cycle forget of id: '.$time_slots[$i]->id.' with j: '.$j.' with i: '.$i.' with value of neighbours: '.$neighbours);
+                    $time_slots->forget($i);
                 }
             }
 
-            //if the time slot i have a sufficent numbers of neighbours sequential after it, then is a valid time slot
-            if($neighbours >= $n_duration){
-                $time_slots[$i]->time_slot_up_bound_id = $time_slots[$i]->id + $n_duration - 1;
-                $time_slots[$i]->time_slot = substr($time_slots[$i]->time_slot, 0, 5);
-                break;  
-            } 
-            else{
-                //remove time slot form the json, that doesn't satisfy the expected_duration
-                $time_slots->forget($i);
+            if ($n_time_slots == 0) {
+                return $this->error('No available time slot for today!', 200);
+            } else {
+                //create the lineup by params in the request
+                $lineup = new Lineup();
+                $lineup->user_id = $request->user_id;
+                $lineup->shop_id = $request->shop_id;
+                $lineup->expected_duration = "00:" . $request->expected_duration . ":00";
+                $lineup->time_slot_down_bound_id = $time_slots[0]->time_slot_down_bound_id;
+                $lineup->time_slot_up_bound_id = $time_slots[0]->time_slot_up_bound_id;
+                $lineup->expected_time = $time_slots[0]->time_slot;
+
+                //associate the ids of shop and user
+                $lineup->withUser($user)->withShop($shop)->save();
+
+                //update capacity
+                TimeSlot::whereBetween('id', [$lineup->time_slot_down_bound_id, $lineup->time_slot_up_bound_id])->decrement('capacity');
+
+                return $this->success(['date' => $date, 'expected_time' => $time_slots[0]->time_slot], 200);
             }
-        }
+        } else {
 
-        if($n_time_slots == 0){
-            return $this->error('No time slot available for today!', 200);
-        }
-        else{
-            //create the lineup by params in the request
-            $lineup = new Lineup();
-            $lineup->user_id = $request->user_id;
-            $lineup->shop_id = $request->shop_id;
-            $lineup->expected_duration = "00:".$request->expected_duration.":00";
-            $lineup->time_slot_down_bound_id = $time_slots[0]->time_slot_down_bound_id;
-            $lineup->time_slot_up_bound_id =  $time_slots[0]->time_slot_up_bound_id;
-            $lineup->expected_time = $time_slots[0]->time_slot;
-
-            //associate the ids of shop and user
-            $lineup->withUser($user)->withShop($shop)->save();
-
-            //update capacity
-            TimeSlot::whereBetween('id', [$lineup->time_slot_down_bound_id, $lineup->time_slot_up_bound_id])->decrement('capacity');
-
-            return $this->success(['date' => $date, 'expected_time' => $time_slots[0]->time_slot], 200);
+            return $this->error('No avaiable timeslots!', 200);
         }
     }
 
@@ -139,7 +147,7 @@ class LineupController extends Controller
         //find the linup by id that we want delete
         $lineup = Lineup::find($id);
 
-        if(!$lineup){
+        if (!$lineup) {
             return $this->error('Ops... Something went wrong!', 200);
         }
 

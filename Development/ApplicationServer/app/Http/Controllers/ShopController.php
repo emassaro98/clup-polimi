@@ -86,7 +86,12 @@ class ShopController extends Controller
                 //if the time slot i have a sufficent numbers of neighbours sequential after it, then is a valid time slot
                 if($neighbours >= $n_duration){
                     $time_slots[$i]->time_slot_up_bound_id = $time_slots[$i]->id + $n_duration - 1;
-                    $time_slots[$i]->expected_duration = "00:".$request->expected_duration.":00";
+                    if($n_duration == 4){
+                        $time_slots[$i]->expected_duration = $request->expected_duration.":00:00";
+                    }else{
+                        $time_slots[$i]->expected_duration = "00:".$request->expected_duration.":00";
+                    }
+                    
                     $time_slots[$i]->time_slot = substr($time_slots[$i]->time_slot, 0, 5);  
                 } 
                 else{
