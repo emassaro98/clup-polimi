@@ -1,6 +1,13 @@
 package com.gheooinc.clup.Objects;
 
-public final class User {
+import android.content.Context;
+import android.content.Intent;
+
+import com.gheooinc.clup.Activities.MainActivity;
+
+import java.io.Serializable;
+
+public final class User implements Serializable {
     //use the singleton pattern
     private int id;
     private String email, password, token, baseURL;
@@ -17,8 +24,12 @@ public final class User {
         this.baseURL = baseURL;
     }
 
-    public static User getInstance() {
-        if (instance == null) {
+    public static User getInstance(Context context) {
+        SerializableManager serializableManager = new SerializableManager();
+        User user = serializableManager.readSerializable(context, "user");
+        if (serializableManager.readSerializable(context, "user") != null) {
+            instance = user;
+        } else {
             instance = new User();
         }
         return instance;

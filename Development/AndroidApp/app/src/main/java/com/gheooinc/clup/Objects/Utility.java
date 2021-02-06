@@ -1,6 +1,7 @@
 package com.gheooinc.clup.Objects;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
@@ -145,12 +146,27 @@ public class Utility {
     }
 
     public void showMessageDialog(String title, String message, Context context) {
+        //create the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
     }
 
+    public void showMessageDialogWithButton(String title, String message, Context context, Intent intent) {
+        //create the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, id) -> {
+                    context.startActivity(intent);
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    //method in order to create a qrCode
     public Bitmap createQRCode(String id, int width, int height) {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
