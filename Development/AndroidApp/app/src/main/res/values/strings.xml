@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings generals -->
+    <string name="app_name">CLup</string>
+    <string name="title_activity_login">Clup</string>
+    <string name="title_activity_main">Clup</string>
+    <string name="error_label">Ops... Something went wrong!</string>
+    <string name="loading_label">This may take a moment.</string>
+    <string name="label_qrcode">Scan the qr code</string>
+    <string name="label_no_time_slot">No time slots available!</string>
+    <!-- Strings for homeFragment -->
+    <string name="title_home">Home</string>
+    <string name="label_home_fragment">Active Reservations</string>
+    <string name="label_error_home">There are no active reservations</string>
+    <!-- Strings for bookFragment -->
+    <string name="title_book">Book</string>
+    <string name="label_book_fragment">Select Supermarket</string>
+    <string name="label_search">Search function not implemented!</string>
+    <!-- Strings for historyFragment -->
+    <string name="title_history">History</string>
+    <string name="label_history_fragment">Reservations</string>
+    <string name="label_error_history">There are no reservations</string>
+    <!-- Strings for loginActivity and SignUpActivity -->
+    <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signup_email">Email (Required)</string>
+    <string name="signup_full_name">Full name (Required)</string>
+    <string name="signup_password">Password (Required)</string>
+    <string name="signup_confirm_password">Repeat password (Required)</string>
+    <string name="error_signup_password">The confirm password field must be equal to the password field!</string>
+    <string name="error_signup">You must fill all the fields!</string>
+    <!-- Strings for item_reservation -->
+    <string name="label_attemp_time">Expected time</string>
+    <string name="label_time_slot">Time slot</string>
+    <string name="label_date_reservation">Date</string>
+    <string name="label_delete">Delete</string>
+    <!-- Strings for item_market -->
+    <string name="label_lineup">Lineup</string>
+    <string name="label_booking">Booking</string>
+    <!-- Strings for bookingFragment and lineupFragment -->
+    <string name="label_date">Selected Date</string>
+    <string name="label_no_date">No date selected</string>
+    <string name="label_time">Available Time Slot</string>
+    <string name="label_success_lineup">Your left is at time: </string>
+    <string name="label_duration">Visit Duration</string>
+    <string name="label_book">Book</string>
+    <string name="label_time_slots_info">Select first a date and then an expected duration</string>
+    <string name="title_activity_reservation">Book</string>
+</resources>
