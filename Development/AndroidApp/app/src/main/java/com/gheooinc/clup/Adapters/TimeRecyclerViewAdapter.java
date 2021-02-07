@@ -17,12 +17,13 @@ import java.util.ArrayList;
 
 public class TimeRecyclerViewAdapter extends RecyclerView.Adapter<TimeRecyclerViewAdapter.ViewHolder> {
 
-    //Variables
+    //Vars
     private final Context mContext;
     private final ArrayList<TimeSlot> mValues;
     private final Listener mListener;
     private int indexOfColoredItem = -1;
 
+    //Constructor method
     public TimeRecyclerViewAdapter(ArrayList<TimeSlot> items, Listener listener, Context context) {
         mValues = items;
         mContext = context;
@@ -39,15 +40,15 @@ public class TimeRecyclerViewAdapter extends RecyclerView.Adapter<TimeRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //this method is used in order to handle the colored time slot when they are selected
+        //This method is used in order to handle the colored time slots when they are selected
         holder.bindItem(position);
-        //handle button
+        //Handle buttons
         holder.mBtnTime.setText(mValues.get(position).getTime());
         holder.mBtnTime.setOnClickListener(view -> {
-            //perform changle of style of the timeslot
+            //Perform change of style of the time slots
             indexOfColoredItem = position;
             notifyDataSetChanged();
-            //listener for use methods of activity
+            //Listener for use methods of activity
             mListener.onListening(mValues.get(position));
         });
     }
@@ -58,19 +59,19 @@ public class TimeRecyclerViewAdapter extends RecyclerView.Adapter<TimeRecyclerVi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //Variables views
+        //Vars views
         public final View mView;
         public final Button mBtnTime;
 
         public ViewHolder(View view) {
             super(view);
-            //findViewById
+            // Vars findViewById
             mView = view;
             mBtnTime = view.findViewById(R.id.btnTime);
         }
 
         void bindItem(int pos) {
-            //check if the time slot is selected, in order to see different from the others
+            //Check if the time slot is selected, in order to show it different from the others
             if (indexOfColoredItem == pos) {
                 mBtnTime.setBackgroundColor(mContext.getResources().getColor(R.color.colorAccent));
                 mBtnTime.setTextColor(mContext.getResources().getColor(R.color.white));

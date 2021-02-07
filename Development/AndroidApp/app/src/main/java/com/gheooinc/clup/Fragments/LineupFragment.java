@@ -1,6 +1,7 @@
 package com.gheooinc.clup.Fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
+import com.gheooinc.clup.Activities.MainActivity;
 import com.gheooinc.clup.Interfaces.CompleteListener;
 import com.gheooinc.clup.Objects.User;
 import com.gheooinc.clup.Objects.Utility;
@@ -39,7 +41,7 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
     private String duration;
 
     public static LineupFragment newInstance(int shopId) {
-        //create fragment and pass the params
+        //Create fragment and pass the params
         LineupFragment f = new LineupFragment();
         Bundle args = new Bundle();
         args.putInt("shop_id", shopId);
@@ -51,13 +53,13 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_lineup, container, false);
-        //setups methods
+        //Fundamental methods
         initViews();
         initComponents();
         return mView;
     }
 
-    //method for initialization of the view element
+    //Method for initialization of the view element
     private void initViews() {
         //findViewById
         Button mBtnBook = mView.findViewById(R.id.btnLineup);
@@ -65,7 +67,7 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
         Button mBtnDuration2 = mView.findViewById(R.id.btnDurationLineup2);
         Button mBtnDuration3 = mView.findViewById(R.id.btnDurationLineup3);
         Button mBtnDuration4 = mView.findViewById(R.id.btnDurationLineup4);
-        //handle the button
+        //Handle the button
         mBtnBook.setOnClickListener(view -> createLineup(shopId, duration));
         mBtnDuration1.setOnClickListener(view -> {
             changeStyleButtons(mBtnDuration1, mBtnDuration2, mBtnDuration3, mBtnDuration4, 234);
@@ -91,17 +93,17 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
         });
     }
 
-    //method for initialization of the useful components of the activity
+    //Method for initialization of the useful components of the activity
     private void initComponents() {
-        //get user instance
+        //Get user instance
         user = User.getInstance(mView.getContext());
         utility = new Utility();
         shopId = getArguments().getInt("shop_id");
     }
 
-    //this method is used for handle the activation or disactivation of buttons for select the duration
+    //This method is used to handle the activation or disactivation of buttons for select the duration
     private void changeStyleButtons(Button button1, Button button2, Button button3, Button button4, int buttons) {
-        //check if we need to unselect buttons, for instance, when buttons is 23, this means that we unselect button 2 and 3
+        //Check if and which buttons should be deselected, for example, when buttons == 23, it means we deselect buttons 2 and 3
         if (buttons == 234) {
             button1.setBackgroundColor(getResources().getColor(R.color.colorAccent));
             button1.setTextColor(getResources().getColor(R.color.white));
@@ -142,9 +144,9 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
 
     }
 
-    //this method is used for create a new lineup
+    //This method is used to create a new lineup
     private void createLineup(int shopId, String duration) {
-        //sets of post parameters
+        //Sets of post params
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(user.getId()));
         params.put("shop_id", String.valueOf(shopId));
@@ -152,27 +154,29 @@ public class LineupFragment extends Fragment implements CompleteListener<String>
         utility.makeCallPostWithToken(user.getBaseURL() + "lineups", mView.getContext(), params, user.getToken(), this);
     }
 
-    //method that is used for decode the json, and then get the data
+    //Method that is used to decode the JSON, and then get the data
     private void decodeResult(String jsonStr) {
         try {
-            //decode json
+            //Decode JSON
             JSONObject jsonObj = new JSONObject(jsonStr);
             Boolean state = jsonObj.getBoolean("state");
-            //check the state of the request, in order to handle errors
+            //Check the state of the request, in order to handle errors
             if (state) {
                 JSONObject jsonData = jsonObj.getJSONObject("data");
-                utility.showMessageDialog("Warning!", "Your left is at time: " + jsonData.getString("expected_time"), mView.getContext());
+                //Start the main activty
+                Intent intent = new Intent(mView.getContext(), MainActivity.class);
+                utility.showMessageDialogWithButton("Warning!", mView.getContext().getString(R.string.label_success_lineup) + " " + jsonData.getString("expected_time"), mView.getContext(), intent);
             } else {
-                //get the message from json
+                //Get the message from the JSON and display the dialog
                 utility.showMessageDialog("Warning!", jsonObj.getString("message"), mView.getContext());
             }
         } catch (Exception e) {
-            //print information of the exception
+            //Print information of the exception
             e.printStackTrace();
         }
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onTaskComplete(boolean state, String result) {
         Log.d(TAG, "The request is ok! " + result);

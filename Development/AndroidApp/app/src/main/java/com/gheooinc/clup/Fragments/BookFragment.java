@@ -38,71 +38,71 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_book, container, false);
-        //setups methods
+        //Fundamental methods
         initViews();
         initComponents();
         initContent();
         return mView;
     }
 
-    //method for initialization of the view element
+    //Method for initialization of the view element
     private void initViews() {
         //findViewById
         mProgressBar = mView.findViewById(R.id.progressBarShop);
         mRecyclerView = mView.findViewById(R.id.recyclerViewShop);
     }
 
-    //method for initialization of the useful components of the activity
+    //Method for initialization of the useful components of the activity
     private void initComponents() {
         //get user instance
-        user = User.getInstance();
+        user = User.getInstance(mView.getContext());
     }
 
-    //method that we use for setup the content of the activity
+    //Method that is used to setup the content of the activity
     private void initContent() {
         Utility utility = new Utility();
         utility.makeCallGetWithToken(user.getBaseURL() + "shops", mView.getContext(), user.getToken(), this);
     }
 
-    //method that is used for decode the json, and then get the data
+    //Method that is used to decode the JSON, and then get the data
     private void decodeResult(String jsonStr) {
         ArrayList<Shop> shops = new ArrayList<>();
         try {
-            //decode json
+            //Decode JSON
             JSONObject jsonObj = new JSONObject(jsonStr);
             Boolean state = jsonObj.getBoolean("state");
-            //check the state of the request, in order to handle errors
+            //Check the state of the request, in order to handle errors
             if (state) {
                 JSONObject jsonData = jsonObj.getJSONObject("data");
-                //get array that contains lineups and bookings
+                //Get array that contains lineups and bookings
                 JSONArray jsonShops = jsonData.getJSONArray("shops");
-                //cycle for get all lineups
+                //Cycle for get all lineups
                 for (int j = 0; j < jsonShops.length(); j++) {
-                    //get single lineup
+                    //Get single lineup
                     JSONObject lineup = jsonShops.getJSONObject(j);
-                    //get params
+                    //Get params
                     Shop shop = new Shop();
                     shop.setName(lineup.getString("name"));
                     shop.setAddress(lineup.getString("position"));
                     shop.setId(lineup.getInt("id"));
                     shops.add(shop);
                 }
-                //set recycler view and pass elements
+                //Set recycler view and pass elements
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
                 mRecyclerView.setAdapter(new MarketRecyclerViewAdapter(shops, mView.getContext()));
             } else {
-                //get the message from json
+                //Get the message from the JSON and display the dialog
             }
         } catch (Exception e) {
-            //print information of the exception
+            //Print the exception information
             e.printStackTrace();
         }
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onTaskComplete(boolean state, String result) {
-        //check is the request is ok
+        //Check if the request is ok
         if (state) {
             Log.d(TAG, "The request is ok! " + result);
             decodeResult(result);
@@ -113,12 +113,12 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
 
     @Override
     public void setProgressBar(boolean visible) {
-        //check if the we need to show the dialog
+        //Check if we need to show the dialog
         if (visible) {
-            // to show this dialog
+            // To show this dialog
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            // to hide this dialog
+            // To hide this dialog
             mProgressBar.setVisibility(View.GONE);
         }
     }

@@ -1,9 +1,11 @@
 package com.gheooinc.clup.Objects;
 
 public class TimeSlot {
+    //Vars
     private int idShop, idUp, idDown;
     private String time, duration;
 
+    //Getter and setter methods
     public String getDuration() {
         return duration;
     }

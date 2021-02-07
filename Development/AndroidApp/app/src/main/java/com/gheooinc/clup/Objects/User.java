@@ -1,30 +1,23 @@
 package com.gheooinc.clup.Objects;
 
 import android.content.Context;
-import android.content.Intent;
-
-import com.gheooinc.clup.Activities.MainActivity;
 
 import java.io.Serializable;
 
 public final class User implements Serializable {
-    //use the singleton pattern
+
+    //Vars
     private int id;
     private String email, password, token, baseURL;
     private static User instance = null;
 
+    //Constructor method
     private User() {
     }
 
-    public String getBaseURL() {
-        return baseURL;
-    }
-
-    public void setBaseURL(String baseURL) {
-        this.baseURL = baseURL;
-    }
-
+    //Use of the singleton pattern, we can instantiate this obj only once. We also use this method in order to get the obj from the memory if exist
     public static User getInstance(Context context) {
+        //Check if there is the obj serializabled, and get it, otherwise create a new instance
         SerializableManager serializableManager = new SerializableManager();
         User user = serializableManager.readSerializable(context, "user");
         if (serializableManager.readSerializable(context, "user") != null) {
@@ -33,6 +26,15 @@ public final class User implements Serializable {
             instance = new User();
         }
         return instance;
+    }
+
+    //Getter and setter methods
+    public String getBaseURL() {
+        return baseURL;
+    }
+
+    public void setBaseURL(String baseURL) {
+        this.baseURL = baseURL;
     }
 
     public int getId() {

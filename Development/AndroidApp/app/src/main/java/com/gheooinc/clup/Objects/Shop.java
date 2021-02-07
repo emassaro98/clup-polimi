@@ -1,9 +1,11 @@
 package com.gheooinc.clup.Objects;
 
 public class Shop {
+    //Vars
     private String address, name;
     private int id;
 
+    //Getter and setter methods
     public String getAddress() {
         return address;
     }

@@ -30,7 +30,7 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
     //Tag for the logcat
     public static final String TAG = HistoryFragment.class.getSimpleName();
 
-    //vars
+    //Vars
     private User user;
     private View mView;
     private RecyclerView mRecyclerView;
@@ -40,14 +40,14 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_history, container, false);
-        //setups methods
+        //Fundamental methods
         initViews();
         initComponents();
         initContent();
         return mView;
     }
 
-    //method for initialization of the view element
+    //Method for initialization of the view element
     private void initViews() {
         //findViewById
         mProgressBar = mView.findViewById(R.id.progressBarHistory);
@@ -55,36 +55,37 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
         mTxtError = mView.findViewById(R.id.txtError);
     }
 
-    //method for initialization of the useful components of the activity
+    //Method for initialization of the useful components of the activity
     private void initComponents() {
-        //get user instance
-        user = User.getInstance();
-        //set the initials in the rounded circle on the home
+        //Get user instance
+        user = User.getInstance(mView.getContext());
+        //Set the initials in the rounded circle on the home
         TextView mTxtName = mView.findViewById(R.id.textViewProfilo);
         mTxtName.setText(user.getEmail().substring(0, 1));
     }
 
-    //method for initialization of the useful components of the activity
+    //Method for initialization of the useful components of the activity
     private void initContent() {
         mTxtError.setVisibility(View.GONE);
         Utility utility = new Utility();
         utility.makeCallGetWithToken(user.getBaseURL() + "users/getAllReservations/" + user.getId(), mView.getContext(), user.getToken(), this);
     }
 
-    //method that is used for decode the json, and then get the data
+    //Method that is used for decode the JSON, and then get the data
     private void decodeResult(String jsonStr) {
         ArrayList<Reservation> reservations = new ArrayList<>();
         try {
-            //decode json
+            //Decode json
             JSONObject jsonObj = new JSONObject(jsonStr);
             Boolean state = jsonObj.getBoolean("state");
-            //check the state of the request, in order to handle errors
+            //Check the state of the request, in order to handle errors
             if (state) {
                 JSONObject jsonData = jsonObj.getJSONObject("data");
-                //get array that contains lineups and bookings
+                //Get array that contains lineups and bookings
                 JSONArray jsonLineups = jsonData.getJSONArray("lineups");
                 JSONArray jsonBookings = jsonData.getJSONArray("bookings");
 
+                //Check if there are no bookings and lineups
                 if (jsonLineups.length() == 0 && jsonBookings.length() == 0) {
                     mTxtError.setText(getResources().getString(R.string.label_error_history));
                     mTxtError.setVisibility(View.VISIBLE);
@@ -92,9 +93,9 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
                     mTxtError.setVisibility(View.GONE);
                 }
 
-                //cycle for get all lineups
+                //Cycle for get all lineups
                 for (int j = 0; j < jsonLineups.length(); j++) {
-                    //get single lineup
+                    //Get single lineup
                     JSONObject lineup = jsonLineups.getJSONObject(j);
                     Reservation reservation = new Reservation();
                     reservation.setId(lineup.getInt("id"));
@@ -106,9 +107,9 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
                     reservations.add(reservation);
                 }
 
-                //cycle for get all bookings
+                //Cycle for get all bookings
                 for (int j = 0; j < jsonBookings.length(); j++) {
-                    //get single booking
+                    //Get single booking
                     JSONObject booking = jsonBookings.getJSONObject(j);
                     Reservation reservation = new Reservation();
                     reservation.setId(booking.getInt("id"));
@@ -119,24 +120,24 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
                     reservation.setBooking(true);
                     reservations.add(reservation);
                 }
-                //set recycler view and pass elements
+                //Set recycler view and pass elements
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
                 mRecyclerView.setAdapter(new HistoryRecyclerViewAdapter(reservations, mView.getContext()));
             } else {
-                //get the message from json
+                //Get the message from JSON
                 mTxtError.setVisibility(View.VISIBLE);
                 mTxtError.setText(getResources().getString(R.string.error_label));
             }
         } catch (Exception e) {
-            //print information of the exception
+            //Print exception information
             e.printStackTrace();
         }
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onTaskComplete(boolean state, String result) {
-        //check is the request is ok
+        //Check if the request is ok
         if (state) {
             Log.d(TAG, "The request is ok! " + result);
             decodeResult(result);
@@ -149,12 +150,12 @@ public class HistoryFragment extends Fragment implements CompleteListener<String
 
     @Override
     public void setProgressBar(boolean visible) {
-        //check if the we need to show the dialog
+        //Check if the we need to show the dialog
         if (visible) {
-            // to show this dialog
+            // To show this dialog
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            // to hide this dialog
+            // To hide this dialog
             mProgressBar.setVisibility(View.GONE);
         }
     }

@@ -1,6 +1,7 @@
 package com.gheooinc.clup.Fragments;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,10 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gheooinc.clup.Activities.MainActivity;
 import com.gheooinc.clup.Adapters.TimeRecyclerViewAdapter;
 import com.gheooinc.clup.Interfaces.CompleteListener;
 import com.gheooinc.clup.Interfaces.Listener;
@@ -48,7 +49,6 @@ public class BookingFragment extends Fragment implements CompleteListener<String
     private Utility utility;
     private RecyclerView mRecyclerView;
     private boolean createBooking;
-    private boolean selectedDuration;
     private String duration;
     private View mView;
     private Button mBtnBook;
@@ -57,7 +57,7 @@ public class BookingFragment extends Fragment implements CompleteListener<String
     private TimeSlot selectedTimeSlot;
 
     public static BookingFragment newInstance(int shopId) {
-        //create fragment and pass the params
+        //Create fragment and pass the params
         BookingFragment f = new BookingFragment();
         Bundle args = new Bundle();
         args.putInt("shop_id", shopId);
@@ -69,13 +69,13 @@ public class BookingFragment extends Fragment implements CompleteListener<String
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_booking, container, false);
-        //setups methods
+        //Fundamental methods
         initViews();
         initComponents();
         return mView;
     }
 
-    //method for initialization of the view element
+    //Method for initialization of the view element
     private void initViews() {
         //findViewById
         mProgressBar = mView.findViewById(R.id.progressBarTimeSlots);
@@ -89,10 +89,10 @@ public class BookingFragment extends Fragment implements CompleteListener<String
         Button mBtnDuration3 = mView.findViewById(R.id.btnDuration3);
         Button mBtnDuration4 = mView.findViewById(R.id.btnDuration4);
         FloatingActionButton mBtnCalendar = mView.findViewById(R.id.fabDate);
-        //handle the button
+        //Handle the button
         mBtnBook.setOnClickListener(view -> createBooking());
-        mBtnCalendar.setOnClickListener(view -> showDataPicker());
-        mTxtDate.setOnClickListener(view -> showDataPicker());
+        mBtnCalendar.setOnClickListener(view -> showDatePicker());
+        mTxtDate.setOnClickListener(view -> showDatePicker());
         mBtnDuration1.setOnClickListener(view -> {
             changeStyleButtons(mBtnDuration1, mBtnDuration2, mBtnDuration3, mBtnDuration4, 234);
             duration = "15";
@@ -115,18 +115,18 @@ public class BookingFragment extends Fragment implements CompleteListener<String
         });
     }
 
-    //method for initialization of the useful components of the activity
+    //Method for initialization of the useful components of the activity
     private void initComponents() {
-        //get user instance
+        //Get user instance
         user = User.getInstance(mView.getContext());
         utility = new Utility();
         shopId = getArguments().getInt("shop_id");
         duration = null;
     }
 
-    //this method is used for handle the activation or disactivation of buttons for select the duration
+    //This method is used for handle the activation or disactivation of buttons for select the duration
     private void changeStyleButtons(Button button1, Button button2, Button button3, Button button4, int buttons) {
-        //check if we need to unselect buttons, for instance, when buttons is 23, this means that we unselect button 2 and 3
+        //Check if and which buttons should be deselected, for example, when buttons == 23, it means we deselect buttons 2 and 3
         if (buttons == 234) {
             button1.setBackgroundColor(getResources().getColor(R.color.colorAccent));
             button1.setTextColor(getResources().getColor(R.color.white));
@@ -167,34 +167,34 @@ public class BookingFragment extends Fragment implements CompleteListener<String
 
     }
 
-    //this method is used for obtain the data from the datapicker
-    private void showDataPicker() {
-        // Get Current Date
+    //This method is used to obtain the data from the datepicker
+    private void showDatePicker() {
+        //Get Current Date
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH);
         int mDay = c.get(Calendar.DAY_OF_MONTH);
         SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd");
         DatePickerDialog datePickerDialog = new DatePickerDialog(mView.getContext(), (view, year, monthOfYear, dayOfMonth) -> {
-            // set day of month , month and year value in the edit text
+            //Set day of month, month and year value in the edit text
             c.set(Calendar.YEAR, year);
             c.set(Calendar.MONTH, monthOfYear);
             c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             mTxtDate.setText(dateParser.format(c.getTime()));
-            //get time slot if the duration is selected
+            //Get time slot if the duration is selected
             if (duration != null) {
                 getTimeSlots(mTxtDate.getText().toString());
             }
         }, mYear, mMonth, mDay);
-        //disable previous dates
+        //Disable previous dates
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
-    //cthis method is used for create a new booking
+    //This method is used to create a new booking
     private void createBooking() {
         createBooking = true;
-        //sets of post parameters
+        //Sets of post params
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(user.getId()));
         params.put("shop_id", String.valueOf(selectedTimeSlot.getIdShop()));
@@ -204,11 +204,11 @@ public class BookingFragment extends Fragment implements CompleteListener<String
         utility.makeCallPostWithToken(user.getBaseURL() + "bookings", mView.getContext(), params, user.getToken(), this);
     }
 
-    //this method is used in order to get time slots
+    //This method is used in order to get time slots
     private void getTimeSlots(String date) {
         createBooking = false;
         if (!mTxtDate.getText().toString().equals(mView.getContext().getResources().getString(R.string.label_no_date))) {
-            //sets of post parameters
+            //Sets of post params
             HashMap<String, String> params = new HashMap<>();
             params.put("date", date);
             params.put("expected_duration", duration);
@@ -216,26 +216,29 @@ public class BookingFragment extends Fragment implements CompleteListener<String
         }
     }
 
-    //method that is used for decode the json, and then get the data
+    //Method that is used to decode the JSON, and then get the data
     private void decodeResult(String jsonStr) {
         ArrayList<TimeSlot> timeSlots = new ArrayList<>();
         try {
-            //decode json
+            //Decode JSON
             JSONObject jsonObj = new JSONObject(jsonStr);
             Boolean state = jsonObj.getBoolean("state");
             //check the state of the request, in order to handle errors
             if (state) {
+                //If a booking has been created
                 if (createBooking) {
-                    utility.showMessageDialog("Warning", jsonObj.getString("message"), mView.getContext());
+                    //start the main activty
+                    Intent intent = new Intent(mView.getContext(), MainActivity.class);
+                    utility.showMessageDialogWithButton("Warning", jsonObj.getString("message"), mView.getContext(), intent);
                 } else {
                     JSONObject jsonData = jsonObj.getJSONObject("data");
-                    //get array that contains time slots
+                    //Get array that contains time slots
                     JSONArray jsonTimeSlots = jsonData.getJSONArray("time_slots");
-                    //cycle for get all timeslots
+                    //Cycle for get all time slots
                     if (jsonTimeSlots.length() > 0) {
                         mTxtTimeSlots.setVisibility(View.GONE);
                         for (int j = 0; j < jsonTimeSlots.length(); j++) {
-                            //get single time slots
+                            //Get single time slots
                             JSONObject timeSlotObj = jsonTimeSlots.getJSONObject(j);
                             TimeSlot timeSlot = new TimeSlot();
                             timeSlot.setIdShop(timeSlotObj.getInt("shop_id"));
@@ -249,32 +252,32 @@ public class BookingFragment extends Fragment implements CompleteListener<String
                         mTxtTimeSlots.setVisibility(View.VISIBLE);
                         mTxtTimeSlots.setText(getResources().getString(R.string.label_no_time_slot));
                     }
-                    //set recycler view and pass elements
+                    //Set recycler view and pass elements
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext(), LinearLayoutManager.HORIZONTAL, false));
                     mRecyclerView.setAdapter(new TimeRecyclerViewAdapter(timeSlots, this, mView.getContext()));
                 }
             } else {
-                //get the message from json
+                //Get the message from JSON
                 utility.showMessageDialog("Warning!", jsonObj.getString("message"), mView.getContext());
             }
         } catch (Exception e) {
-            //print information of the exception
+            //Print exception information 
             e.printStackTrace();
         }
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onListening(TimeSlot result) {
         selectedTimeSlot = result;
-        //enable the book button
+        //Enable the book button
         mBtnBook.setEnabled(true);
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onTaskComplete(boolean state, String result) {
-        //check is the request is ok
+        //Check if the request is ok
         if (state) {
             Log.d(TAG, "The request is ok! " + result);
             decodeResult(result);
@@ -287,12 +290,12 @@ public class BookingFragment extends Fragment implements CompleteListener<String
 
     @Override
     public void setProgressBar(boolean visible) {
-        //check if the we need to show the dialog
+        //Check if the we need to show the dialog
         if (visible) {
-            // to show this dialog
+            // To show this dialog
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            // to hide this dialog
+            // To hide this dialog
             mProgressBar.setVisibility(View.GONE);
         }
     }

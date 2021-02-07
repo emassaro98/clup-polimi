@@ -17,15 +17,15 @@ import java.util.ArrayList;
 
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder> {
 
-    //Variables
+    //Vars
     private final Context mContext;
     private final ArrayList<Reservation> mValues;
 
+    //Constructor method
     public HistoryRecyclerViewAdapter(ArrayList<Reservation> items, Context context) {
         mValues = items;
         mContext = context;
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,7 +36,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //check type of reservation
+        //Check type of reservation, in order to change the style of some elements
         if (mValues.get(position).isBooking()) {
             holder.mTxtType.setText("Booking");
             holder.mTxtType.setBackgroundTintList(mContext.getColorStateList(R.color.text_view_booking));
@@ -44,7 +44,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             holder.mTxtType.setText("Lineup");
             holder.mTxtType.setBackgroundTintList(mContext.getColorStateList(R.color.text_view_lineup));
         }
-        //set for the textviews
+        //Set text in the textViews
         holder.mTxtMarketName.setText(mValues.get(position).getShopName());
         holder.mTxtMarketAddress.setText(mValues.get(position).getShopAddress());
         holder.mTxtDate.setText(mValues.get(position).getDate());
@@ -56,7 +56,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //Variables views
+        //Vars of the views
         public final View mView;
         public final TextView mTxtMarketName, mTxtMarketAddress, mTxtType, mTxtDate;
 

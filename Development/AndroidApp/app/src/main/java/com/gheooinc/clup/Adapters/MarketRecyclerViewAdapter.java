@@ -21,20 +21,22 @@ import java.util.ArrayList;
 
 public class MarketRecyclerViewAdapter extends RecyclerView.Adapter<MarketRecyclerViewAdapter.ViewHolder> {
 
-    //Variables
+    //Vars
     private final Context mContext;
     private final ArrayList<Shop> mValues;
 
+    //Constructor method
     public MarketRecyclerViewAdapter(ArrayList<Shop> items, Context context) {
         mValues = items;
         mContext = context;
     }
 
-    //this methods is used for start the activity concerning the reservations
+    //This methods is used to start the activity concerning the reservations
     private void startReservationActivity(boolean value, int shop_id) {
+        //Create intent
         Intent intent = new Intent(mContext, ReservationActivity.class);
         Bundle b = new Bundle();
-        //params that we need to pass in the new activity
+        //Params that we need to pass in the new activity
         b.putBoolean("booking", value);
         b.putInt("id_shop", shop_id);
         intent.putExtras(b);
@@ -50,10 +52,10 @@ public class MarketRecyclerViewAdapter extends RecyclerView.Adapter<MarketRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //set for the textviews
+        //Set text in the textViews
         holder.mTxtMarketName.setText(mValues.get(position).getName());
         holder.mTxtMarketAddress.setText(mValues.get(position).getAddress());
-        //handle fab
+        //Handle fabs
         holder.mFabBooking.setOnClickListener(view -> startReservationActivity(true, mValues.get(position).getId()));
         holder.mFabLineUp.setOnClickListener(view -> startReservationActivity(false, mValues.get(position).getId()));
     }
@@ -64,14 +66,14 @@ public class MarketRecyclerViewAdapter extends RecyclerView.Adapter<MarketRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //Variables views
+        //Vars views
         public final View mView;
         public final TextView mTxtMarketName, mTxtMarketAddress, mTxtAttemptTime;
         public final FloatingActionButton mFabLineUp, mFabBooking;
 
         public ViewHolder(View view) {
             super(view);
-            //findViewById
+            //Vars findViewById
             mView = view;
             mTxtMarketName = view.findViewById(R.id.txtMarketName);
             mTxtMarketAddress = view.findViewById(R.id.txtMarketAddress);

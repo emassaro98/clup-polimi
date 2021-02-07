@@ -1,10 +1,12 @@
 package com.gheooinc.clup.Objects;
 
 public class Reservation {
+    //Vars
     private String shopName, attemptTime, shopAddress, date;
     private boolean booking;
     private int id;
 
+    //Getter and setter methods
     public String getAttemptTime() {
         return attemptTime;
     }

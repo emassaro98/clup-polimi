@@ -16,19 +16,19 @@ public class ReservationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
-
+       //Fundamental methods
         initToolbar();
         initView(savedInstanceState);
     }
 
-    //this method is used for handle the back button
+    //Method used to handle the back button
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
 
-    //methods that set the toolbar
+    //Method for inizialize the toolbar
     private void initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbarReservation);
         setSupportActionBar(toolbar);
@@ -36,14 +36,14 @@ public class ReservationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    //method that sets the views
+    //Method that sets the views
     private void initView(Bundle savedInstanceState) {
-        //check if we need to start the booking fragment or the lineup fragment
+        //Check if we need to start the booking fragment or the lineup fragment
         Intent intent = getIntent();
         boolean booking = intent.getBooleanExtra("booking", true);
         int id = intent.getIntExtra("id_shop", 1);
 
-        //start lineup fragment or booking fragment
+        //Start booking fragment or  lineup fragment
         if (savedInstanceState == null && booking) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.containerReservation, BookingFragment.newInstance(id))

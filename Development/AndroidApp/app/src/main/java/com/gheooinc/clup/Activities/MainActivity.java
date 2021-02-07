@@ -1,7 +1,10 @@
 package com.gheooinc.clup.Activities;
 
 import android.os.Bundle;
+import android.util.Log;
 
+import com.gheooinc.clup.Objects.SerializableManager;
+import com.gheooinc.clup.Objects.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,18 +23,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //setup methods
+        //Fundamental methods
         initToolbar();
         initBottomNavigation();
     }
 
-    //method for inizialize the toolbar
+    //Method for inizialize the toolbar
     private void initToolbar() {
-        //hide the toolbar
+        //Hide the toolbar
         getSupportActionBar().hide();
     }
 
-    //method for inizialize the bottom navigation
+
+    //Method for inizialize the bottom navigation
     private void initBottomNavigation() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

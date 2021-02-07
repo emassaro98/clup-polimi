@@ -31,7 +31,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     //Tag for the logcat
     public static final String TAG = HomeRecyclerViewAdapter.class.getSimpleName();
 
-    //Variables
+    //Vars
     private final Context mContext;
     private final ArrayList<Reservation> mValues;
     private final Utility utility;
@@ -41,6 +41,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private ViewHolder mViewHolder;
     private AlertDialog dialog;
 
+    //Constructor method
     public HomeRecyclerViewAdapter(ArrayList<Reservation> items, String token, String baseUrl, Context context) {
         mValues = items;
         mContext = context;
@@ -50,7 +51,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         initDialog();
     }
 
-    //method for the asynctasklistener when the request is complete
+    //Method for the listener (which is used to pass data between the utility object and current activity) when the request is complete
     @Override
     public void onTaskComplete(boolean state, String result) {
         if (state) {
@@ -64,43 +65,44 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public void setProgressBar(boolean visible) {
-        //check if the we need to show the dialog
+        //Check if the we need to show the dialog
         if (visible) {
-            // to show this dialog
+            //To show this dialog
             dialog.show();
         } else {
-            // to hide this dialog
+            //To hide this dialog
             dialog.dismiss();
         }
     }
 
+    //Method for initialize the dialog
     private void initDialog() {
-        //create the dialog with process
+        //Create the dialog with the progress bar
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(false);
         builder.setView(R.layout.loading_dialog);
         dialog = builder.create();
     }
 
-    //method that is used for decode the json, and then get the data
+    //Method that is used for decode the json, and then get the data
     private void decodeResult(String jsonStr) {
         try {
-            //decode json
+            //Decode json
             JSONObject jsonObj = new JSONObject(jsonStr);
             Boolean state = jsonObj.getBoolean("state");
             if (state) {
-                //delete the item from the view
+                //Delete the item from the view
                 deleteItem();
             }
-            //show message
+            //Get the message from the JSON and display the dialog
             utility.showMessageDialog("Attention", jsonObj.getString("message"), mContext);
         } catch (Exception e) {
-            //print information of the exception
+            //Print information of the exception
             e.printStackTrace();
         }
     }
 
-    //delete method, for delete the item from the view
+    //Delete method, for delete the item from the view
     private void deleteItem() {
         mValues.remove(removePositionId);
         notifyItemRemoved(removePositionId);
@@ -108,23 +110,28 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
 
-    //this method is used for generate the qrcode
+    //This method is used to generate the qrCode
     private void showQrCode(int id) {
         Utility utility = new Utility();
         Bitmap bitmap = utility.createQRCode(Integer.toString(id), 300, 300);
-        //create the dialog
+        //Create the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setView(R.layout.qrcode_dialog);
         Dialog dialog = builder.create();
         dialog.show();
+        //Set the bitmap in the view
         ImageView qrcode = dialog.findViewById(R.id.imgQrCode);
         qrcode.setImageBitmap(bitmap);
     }
 
+    //This method is used to delete the reservation
     private void deleteReservation(boolean isBooking, String id) {
+        //Check which type of reservation is (booking or lineup)
         if (isBooking) {
+            //Function used to call the associated webservice
             utility.makeCallDeleteWithToken(mBaseUrl + "bookings/" + id, mContext, mToken, this);
         } else {
+            //Function used to call the associated webservice
             utility.makeCallDeleteWithToken(mBaseUrl + "lineups/" + id, mContext, mToken, this);
         }
 
@@ -140,8 +147,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         mViewHolder = holder;
-        //check type of reservation
+        //Check type of reservation, in order to change the style of some elements
         if (mValues.get(position).isBooking()) {
+            //Set text in the textViews and change style
             holder.mTxtType.setText("Booking");
             holder.mTxtDateLabel.setVisibility(View.VISIBLE);
             holder.mTxtDate.setVisibility(View.VISIBLE);
@@ -149,11 +157,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             holder.mTxtAttemptTime.setBackgroundTintList(mContext.getColorStateList(R.color.text_view_booking));
             holder.mTxtDate.setText(mValues.get(position).getDate());
             holder.mTxtAttemptTimeLabel.setText(mContext.getResources().getString(R.string.label_time_slot));
+            //Handle the button delete
             holder.mBtnDelete.setOnClickListener(view -> {
                 removePositionId = position;
                 deleteReservation(true, String.valueOf(mValues.get(position).getId()));
             });
         } else {
+            //Set text in the textViews and change style
             holder.mTxtType.setText("Lineup");
             holder.mTxtDateLabel.setVisibility(View.GONE);
             holder.mTxtDate.setVisibility(View.GONE);
@@ -161,16 +171,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             holder.mTxtType.setBackgroundTintList(mContext.getColorStateList(R.color.text_view_lineup));
             holder.mTxtAttemptTime.setBackgroundTintList(mContext.getColorStateList(R.color.text_view_lineup));
             holder.mTxtAttemptTimeLabel.setText(mContext.getResources().getString(R.string.label_attemp_time));
+            //Handle the button delete
             holder.mBtnDelete.setOnClickListener(view -> {
                 removePositionId = position;
                 deleteReservation(false, String.valueOf(mValues.get(position).getId()));
             });
         }
-        //set for the textviews
+        //Set text in the textViews
         holder.mTxtMarketName.setText(mValues.get(position).getShopName());
         holder.mTxtMarketAddress.setText(mValues.get(position).getShopAddress());
         holder.mTxtAttemptTime.setText(String.valueOf(mValues.get(position).getAttemptTime()));
-        //handle fab
+        //Handle fab
         holder.mFabQrCode.setOnClickListener(view -> showQrCode(mValues.get(position).getId()));
     }
 
@@ -180,7 +191,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        //Variables views
+        //Vars views
         public final View mView;
         public final TextView mTxtMarketName, mTxtMarketAddress, mTxtAttemptTime, mTxtAttemptTimeLabel, mTxtType, mTxtDate, mTxtDateLabel;
         public final FloatingActionButton mFabQrCode;
