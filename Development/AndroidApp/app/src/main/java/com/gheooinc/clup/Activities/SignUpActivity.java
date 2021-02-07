@@ -93,7 +93,8 @@ public class SignUpActivity extends AppCompatActivity implements CompleteListene
             //Decode JSON
             JSONObject jsonObj = new JSONObject(jsonStr);
             //Get the message from JSON and display the dialog
-            utility.showMessageDialog("Attention", jsonObj.getString("message"), this);
+            Intent intent = new Intent(this, LoginActivity.class);
+            utility.showMessageDialogWithButton("Attention", jsonObj.getString("message"), this, intent);
         } catch (Exception e) {
             //Print information of the exception
             e.printStackTrace();

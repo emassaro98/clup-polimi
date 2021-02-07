@@ -1,6 +1,7 @@
 package com.gheooinc.clup.Objects;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -181,6 +182,7 @@ public class Utility {
                     context.startActivity(intent);
                 });
         AlertDialog alert = builder.create();
+        alert.setOnShowListener(arg0 -> alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.colorAccent)));
         alert.show();
     }
 
