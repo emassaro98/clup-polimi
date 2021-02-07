@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
     //Vars
     private User user;
     private View mView;
+    private TextView mTxtError;
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
 
@@ -50,6 +52,7 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
         //findViewById
         mProgressBar = mView.findViewById(R.id.progressBarShop);
         mRecyclerView = mView.findViewById(R.id.recyclerViewShop);
+        mTxtError = mView.findViewById(R.id.txtError);
     }
 
     //Method for initialization of the useful components of the activity
@@ -60,6 +63,7 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
 
     //Method that is used to setup the content of the activity
     private void initContent() {
+        mTxtError.setVisibility(View.GONE);
         Utility utility = new Utility();
         utility.makeCallGetWithToken(user.getBaseURL() + "shops", mView.getContext(), user.getToken(), this);
     }
@@ -91,7 +95,9 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
                 mRecyclerView.setAdapter(new MarketRecyclerViewAdapter(shops, mView.getContext()));
             } else {
-                //Get the message from the JSON and display the dialog
+                //Get the message from the JSON
+                mTxtError.setVisibility(View.VISIBLE);
+                mTxtError.setText(getResources().getString(R.string.error_label));
             }
         } catch (Exception e) {
             //Print the exception information
@@ -108,6 +114,8 @@ public class BookFragment extends Fragment implements CompleteListener<String> {
             decodeResult(result);
         } else {
             Log.d(TAG, "Error! " + result);
+            mTxtError.setVisibility(View.VISIBLE);
+            mTxtError.setText(getResources().getString(R.string.error_label));
         }
     }
 
